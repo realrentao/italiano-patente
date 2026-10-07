@@ -1,0 +1,8 @@
+*
+!.gitignore
+!index_full.html
+!README.md
+!img_sign/
+!img_sign/**
+!audio_full/
+!audio_full/**
