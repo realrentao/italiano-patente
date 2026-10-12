@@ -21,12 +21,11 @@
                     background:#fff;vertical-align:middle;}
   header h1{margin:2px 0 0;font-size:19px;}
   header .sub{font-size:12.5px;opacity:.92;}
-  .chapters{display:flex;gap:6px;overflow-x:auto;padding:10px 20px;background:#fff;
-            border-bottom:1px solid var(--line);scrollbar-width:thin;}
-  .chapt{flex:0 0 auto;padding:7px 13px;border-radius:18px;background:var(--chip);
-         border:1px solid var(--line);font-size:13px;cursor:pointer;color:var(--muted);white-space:nowrap;}
-  .chapt.on{background:var(--brand);color:#fff;border-color:var(--brand);}
-  .chapt b{font-weight:700;}
+  .chapters{background:#fff;border-bottom:1px solid var(--line);}
+  .chaptsel{width:100%;max-width:440px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;
+            background:#fff;color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;
+            margin:10px 20px;display:block;}
+  .chaptsel:focus{outline:none;border-color:var(--brand);}
   .wrap{max-width:900px;margin:0 auto;padding:14px 14px 60px;}
   .tabs{display:flex;gap:8px;margin:12px 0;}
   .tab{flex:1;text-align:center;padding:9px;background:var(--card);border:1px solid var(--line);
@@ -83,7 +82,7 @@
   <h1>意大利驾照理论题库 · 中意双语（7107 题 / 26 章，含 2025 新规补充）</h1>
   <div class="sub">官方 ministerial 数据库 · 考试为意语 Vero/Falso：30 题 · 20 分钟 · 最多错 3 题</div>
 </header>
-<div class="chapters" id="chapters"></div>
+<div class="chapters"><select class="chaptsel" id="chaptSel" aria-label="选择章节"></select></div>
 <div class="wrap">
   <div class="tabs">
     <div class="tab on" data-mode="study" onclick="setMode('study')">📖 学习</div>
@@ -142,20 +141,18 @@ function play(g,lang){
   a.play().catch(e=>toast('音频尚未生成，请稍后（后台正在批量生成）'));
 }
 
-/* ---- 章节导航 ---- */
+/* ---- 章节导航（下拉菜单） ---- */
 function buildChapters(){
-  const c=document.getElementById('chapters');
-  c.innerHTML='';
+  const sel=document.getElementById('chaptSel');
+  sel.innerHTML='';
   for(const ch in DATA){
     let n=0;for(const s in DATA[ch])n+=DATA[ch][s].length;
-    const el=document.createElement('div');
-    el.className='chapt'+(ch===curCh?' on':'');
-    el.dataset.ch=ch;
-    el.innerHTML='<span class="t">'+esc(CHZH[ch]||ch)+'</span> · '+n;
-    el.title=n+' 题';
-    el.onclick=()=>{curCh=ch;curSub=null;render();};
-    c.appendChild(el);
+    const o=document.createElement('option');
+    o.value=ch;o.textContent=(CHZH[ch]||ch)+' ('+n+')';
+    if(ch===curCh)o.selected=true;
+    sel.appendChild(o);
   }
+  sel.onchange=()=>{curCh=sel.value;curSub=null;render();};
 }
 
 /* ---- 子主题筛选（下拉菜单） ---- */
