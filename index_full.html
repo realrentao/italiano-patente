@@ -293,11 +293,12 @@ function submitExam(){
   clearInterval(timerId);
   let err=0,blank=0;
   examQs.forEach(q=>{if(q._pick===undefined)blank++;else if(q._pick!==q.a)err++;});
-  const pass=err<=3;
+  const totalErr=err+blank;            // 官方规则：未答计为错误
+  const pass=totalErr<=3;              // 30 题最多错 3 题（提交后才判定）
   document.getElementById('examList').innerHTML=`<div class="result">
     <h2 style="margin:0 0 8px;">${pass?'🎉 通过！':'❌ 未通过'}</h2>
-    <div class="big" style="color:${pass?'var(--ok)':'var(--bad)'}">错误 ${err} / 30</div>
-    <p class="progress">官方规则：最多 3 错 · ${blank?('未答 '+blank+' 题（计为错误）'):''}</p>
+    <div class="big" style="color:${pass?'var(--ok)':'var(--bad)'}">错误 ${totalErr} / 30</div>
+    <p class="progress">官方规则：30 题最多错 3 题（未答计为错误）· 答错 ${err}${blank?(' + 未答 '+blank):''} = 共 ${totalErr} 错</p>
     <p class="progress">${pass?'可预约正式考试 ✔':'建议复习薄弱章节后重考'}</p>
   </div>`;
 }
